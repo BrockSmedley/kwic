@@ -1,1 +1,1 @@
-from kwic import kwic1 as kwic
+from kwic import kwic0 as kwic
