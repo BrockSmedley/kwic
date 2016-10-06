@@ -38,17 +38,34 @@ def kwic2(sentences):
 #kwic2 + numbered tuples
 def kwic3(sentences):
     print "kwic3"
-    brokenSentenceList = kwic2(sentences)
+    
+    #list of sencentes broken up by word
+    sentenceList = kwic1(sentences)
+    
+    #list of shifted sentences
+    shiftedSentenceList = kwic2(sentences)
 
     numberedTupleList = []
-
     n = 0
-    for sentence in brokenSentenceList:
+    for sentence in sentenceList:
         numTuple = (sentence, n)
         n += 1
         numberedTupleList.append(numTuple)
 
-    return numberedTupleList
+    #now we have a sentence list with numbered lines
+    #shift the sentence, numbering each line
+    n = 0
+    k = 0
+    shiftedNumberedTupleList = []
+    
+    for sentence in sentenceList:
+        for word in sentence:
+            stuple = (shiftedSentenceList[k], n)
+            shiftedNumberedTupleList.append(stuple)
+            k += 1
+        n += 1
+
+    return shiftedNumberedTupleList
 
 #kwic3 + alphabetization
 def kwic4(sentences):
@@ -57,17 +74,26 @@ def kwic4(sentences):
 
     return alphabetize(numberedTupleList)
 
+#kwic4 + line indices
 def kwic5(sentences):
     print "kwic5"
+    
     #ant = alphabetizedNumberedTuple
     antList = kwic4(sentences)
-    
+
+    return antList
+
+#kwic5 + ignoreWords arg
+def kwic6(sentences, ignoredWords = []):
+    lines = kwic5(sentences)
+    lines = ignore_words(ignoredWords, lines)
+
+    return lines
     
 #input: multi-line multi-word string
 #output: list of multi-word strings separated by line
 def break_lines(string):
     return string.split('\n')
-
 
 #input: multi-word string
 #output: array of words
@@ -101,3 +127,16 @@ def circ_shift(wordsArray):
 def alphabetize(tupleList):
     return sorted(tupleList, key=lambda x: (x[0][0]).lower())
     #thanks http://stackoverflow.com/questions/20183069/how-to-sort-multidimensional-array-by-column
+
+#input: list of ignored words, list of tuples: (["strings"...], int)
+#output: list of tuples missing ones that start with an ignored word
+def ignore_words(ignoredWords, lines):
+    if (ignoredWords == []):
+        return lines
+    else:
+        for line in lines:
+            for word in ignoredWords:
+                if (line[0][0].lower() == word.lower()):
+                    lines.remove(line)
+                    break
+        return lines

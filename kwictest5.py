@@ -1,5 +1,8 @@
 from kwic5 import *
 
-result = kwic("Design is hard\nDesign is hard\nLet's just implement")
-print result
-assert result[0][1] == 0 and "Design" in result[0][0] and result[1][1] == 1 and "Let's" in result[1][0]
+result = kwic("Qesign is hard\nSuper hard\nLet's just implement")
+
+
+for i in range(len(result)-1):
+    print result[i]
+    assert result[i][0][0].lower() <= result[i+1][0][0].lower()
