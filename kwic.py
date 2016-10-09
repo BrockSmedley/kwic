@@ -2,7 +2,7 @@
 def kwic0(sentences):
     print "kwic0"
     #break string into lines (list)
-    lines = break_lines(sentences)
+    lines = break_lines(sentences, "\n")
     return(lines)
 
 #kwic0 + breaks lines into individual words
@@ -70,6 +70,7 @@ def kwic3(sentences):
 #kwic3 + alphabetization
 def kwic4(sentences):
     print "kwic4"
+    
     numberedTupleList = kwic3(sentences)
 
     return alphabetize(numberedTupleList)
@@ -81,19 +82,55 @@ def kwic5(sentences):
     #ant = alphabetizedNumberedTuple
     antList = kwic4(sentences)
 
+    #TODO: Something with this function
+
     return antList
 
 #kwic5 + ignoreWords arg
-def kwic6(sentences, ignoredWords = []):
+def kwic6(sentences, ignoreWords = []):
+    print "ignoreWords:"
+    print ignoreWords
     lines = kwic5(sentences)
-    lines = ignore_words(ignoredWords, lines)
+    lines = ignore_words(ignoreWords, lines)
 
     return lines
+
+#kwic6 + listPairs arg
+def kwic7(sentences, ignoreWords = [], listPairs=False):
+    result = kwic6(sentences, ignoreWords)
+
+    if (listPairs == True):
+        pairs = find_pairs(result)
+        result.append(pairs)
+    
+    return result
+
+#kwic7 + periodsToBreaks
+def kwic8(sentences, ignoreWords = [], listPairs=False, periodsToBreaks=False):
+    #"x. " as delimiter
+
+    if (periodsToBreaks == True):
+        #break sentences by new delimiter
+        alpha = ['a','b','c','d','e','f','g','h','i','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        removeMe = []
+        
+        for c in range(len(sentences)-1):
+            for a in alpha:
+                if (sentences[c] == a and sentences[c+1] == "." and sentences[c+2] == " "):
+                    removeMe.append(a)
+        
+        for r in removeMe:
+            sentences = (r + "\n").join(sentences.split(r + ". "))
+    result = kwic7(sentences, ignoreWords, listPairs)
+
+
+    return result
+    
     
 #input: multi-line multi-word string
 #output: list of multi-word strings separated by line
-def break_lines(string):
-    return string.split('\n')
+def break_lines(string, delimiter):
+    return string.split(delimiter)
 
 #input: multi-word string
 #output: array of words
@@ -125,18 +162,81 @@ def circ_shift(wordsArray):
 #input: list of tuples; first item: list of strings; second item: integer
 #output: same type of list in alphabetical order
 def alphabetize(tupleList):
-    return sorted(tupleList, key=lambda x: (x[0][0]).lower())
+    if (tupleList != []):
+        return sorted(tupleList, key=lambda x: (x[0][0]).lower())
+    else:
+        return tupleList
     #thanks http://stackoverflow.com/questions/20183069/how-to-sort-multidimensional-array-by-column
 
 #input: list of ignored words, list of tuples: (["strings"...], int)
 #output: list of tuples missing ones that start with an ignored word
 def ignore_words(ignoredWords, lines):
-    if (ignoredWords == []):
+    newIgnored = []
+    for a in ignoredWords:
+        a = strip_punctuation(a)
+        newIgnored.append(a)
+
+    newLines = []
+    i = 0
+    for l in lines:
+        wordList = []
+        for w in l[0]:
+            w = strip_punctuation(w)
+            wordList.append(w)
+        newTuple = (wordList, lines[i][1])
+        newLines.append(newTuple)
+        i += 1
+
+    lines = newLines
+
+    print "newIgnored"
+    print newIgnored
+
+    linesToRemove = []
+    
+    if (newIgnored == []):
         return lines
     else:
-        for line in lines:
-            for word in ignoredWords:
+        for word in newIgnored:
+            for line in lines:
                 if (line[0][0].lower() == word.lower()):
-                    lines.remove(line)
-                    break
+                    linesToRemove.append(line)
+
+        for rm in linesToRemove:
+            lines.remove(rm)
+        
         return lines
+
+def strip_punctuation(word):
+    ignoredChars = ['.', '?', ',', '!', ':']
+    
+    return "".join(x for x in word if x not in ignoredChars)
+
+#input: return from kwic6
+#output: kwic6 values + appended list of pairs & their line numbers
+def find_pairs(result):
+    lines = result
+    
+    #holds ((a,b), x) where a & b are words and x is a line number
+    duplicatePairs = []
+
+    #for each word and the word next to it
+        #   test if that pair of words appears again on the line
+        #       if it does, append that pair to the list of pairs to return in a tuple with its line number
+    
+    for line in lines:
+        words = line[0]
+        lineNum = line[1]
+
+        for i in range(len(words)-1):
+            #make a tuple of pairs of words to test
+            pair = (words[i], words[i+1])
+
+            #test pair against other pairs on line
+            for j in range(i+1, len(words)-1):
+                p = (words[j], words[j+1])
+                if (pair == p and (pair, lineNum) not in duplicatePairs):
+                    duplicatePairs.append((pair, lineNum))
+        
+    return duplicatePairs
+

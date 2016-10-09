@@ -1,0 +1,14 @@
+1. How did you decide what to test first? Would your final code change significantly if you changed the order of tests?
+I decided what to test first based on the requirements laid out by my tests. For instance, if I knew that my kwic needed to return a list of tuples with the first element being a list of strings and the second element being an integer, then I would write assert statements for each of those requirements, checking the results iteratively.
+If I changed the order of my tests, the final code would likely change significantly. My code uses a master file that has a separate function for each iteration of kwic. Then it has separate files (kwic0-N) to call those functions. The higher versions rely on the lower versions to run; kwic0’s result gets fed into kwic1 and so on. So in that case, it is obvious that the code would have to be modified a lot. However, it would just be re-organization. The logical portions of the code would remain relatively the same.
+2. What did you think of test driven development, for this problem? What are the strengths and weaknesses of the approach? Does it encourage/discourage certain kinds of program designs?
+I do not like test-driven development at all. I can see why someone might want to use it but it is just so ineffective and time-consuming. Additionally, splitting iterations of a program into multiple files is in my humble opinion, the most tedious and ineffective way to organize a program. I’m not sure why we did that but here we are.
+Strengths of Test-Driven Development:
+-	It provides a framework for developing iterations of code so as to meet requirements of stakeholders
+-	It ensures that a program does what it is supposed to do
+Weaknesses of Test-Driven Development:
+-	It takes way too much time
+-	It is tedious
+-	It can be exploited; you can just hard-code values to pass tests
+I believe Test-Driven Development encourages developers to write choppy code that may have to be modified later. However, it does tend to compartmentalize code so that if you get it right the first time, you can go on writing the rest of your program and never look at the old code again, so long as you know the return values you can expect. This may be a good idea in a corporate setting, where you are getting paid to write only a specific set of software, and have no creative control. However, if you actually care about your project, Test-Driven Development may hinder your efforts in making your program awesome.
+In my opinion, nobody should use Test-Driven Development. It encourages developers to meet only the bare minimum, which bottlenecks creative output. It is also very tedious to write tests in such a manner, which can cost money, since time is in fact money. If you are looking to make a barebones system that meets only very specific requirements, however, Test-Driven Development isn’t all that bad.
