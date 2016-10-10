@@ -189,9 +189,6 @@ def ignore_words(ignoredWords, lines):
 
     lines = newLines
 
-    print "newIgnored"
-    print newIgnored
-
     linesToRemove = []
     
     if (newIgnored == []):
@@ -219,6 +216,7 @@ def find_pairs(result):
     
     #holds ((a,b), x) where a & b are words and x is a line number
     duplicatePairs = []
+    numPairs = 0 #for indexing
 
     #for each word and the word next to it
         #   test if that pair of words appears again on the line
@@ -235,8 +233,23 @@ def find_pairs(result):
             #test pair against other pairs on line
             for j in range(i+1, len(words)-1):
                 p = (words[j], words[j+1])
-                if (pair == p and (pair, lineNum) not in duplicatePairs):
-                    duplicatePairs.append((pair, lineNum))
+                #if we find a matching pair
+                if (pair == p):
+                    #if the pair is already in the duplicates list & line number is not
+                    plIndex = pairPresentIndex(duplicatePairs, p, lineNum)
+                    if (plIndex >= 0):
+                        #add the line number by assigning a new tuple
+                        if (str(lineNum) not in duplicatePairs[plIndex][1]):
+                            duplicatePairs[plIndex] = (duplicatePairs[plIndex][0], duplicatePairs[plIndex][1] + str(lineNum))
+                    else:
+                        #add the new item
+                        duplicatePairs.append((p, str(lineNum)))
         
     return duplicatePairs
 
+def pairPresentIndex(duplicatePairs, pair, lineNum):
+    for pi in range(len(duplicatePairs)):
+        if (pair in duplicatePairs[pi]):
+            return pi
+    
+    return -1
